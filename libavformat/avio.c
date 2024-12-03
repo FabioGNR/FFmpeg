@@ -510,9 +510,13 @@ static inline int retry_transfer_wrapper(URLContext *h, uint8_t *buf,
     int64_t wait_since = 0;
 
     len = 0;
+    av_log(NULL, AV_LOG_TRACE, "retry_transfer_wrapper\n");
+
     while (len < size_min) {
+        av_log(NULL, AV_LOG_TRACE, "retry_transfer_wrapper check_interrupt\n");
         if (ff_check_interrupt(&h->interrupt_callback))
             return AVERROR_EXIT;
+        av_log(NULL, AV_LOG_TRACE, "retry_transfer_wrapper url_read\n");
         ret = read ? h->prot->url_read (h, buf + len, size - len):
                      h->prot->url_write(h, cbuf + len, size - len);
         if (ret == AVERROR(EINTR))
@@ -522,6 +526,7 @@ static inline int retry_transfer_wrapper(URLContext *h, uint8_t *buf,
         if (ret == AVERROR(EAGAIN)) {
             ret = 0;
             if (fast_retries) {
+                av_log(NULL, AV_LOG_TRACE, "retry_transfer_wrapper fast_retries--\n");
                 fast_retries--;
             } else {
                 if (h->rw_timeout) {
@@ -530,6 +535,8 @@ static inline int retry_transfer_wrapper(URLContext *h, uint8_t *buf,
                     else if (av_gettime_relative() > wait_since + h->rw_timeout)
                         return AVERROR(EIO);
                 }
+                av_log(NULL, AV_LOG_TRACE, "retry_transfer_wrapper sleep 1000\n");
+
                 av_usleep(1000);
             }
         } else if (ret == AVERROR_EOF)
