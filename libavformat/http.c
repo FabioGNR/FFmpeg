@@ -411,6 +411,7 @@ redo:
             goto fail;
         reconnect_delay_total += reconnect_delay;
         reconnect_delay = 1 + 2 * reconnect_delay;
+        printf("Will reconnect in %d seconds\n", reconnect_delay);
         conn_attempts++;
 
         /* restore the offset (http_connect resets it) */

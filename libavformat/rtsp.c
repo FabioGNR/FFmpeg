@@ -1807,6 +1807,7 @@ redirect:
                 host, port, "%s", path);
 
     if (rt->control_transport == RTSP_MODE_TUNNEL) {
+        av_log(s, AV_LOG_INFO, "Doing the tunnel\n");
         /* set up initial handshake for tunneling */
         char httpname[1024];
         char sessioncookie[17];
@@ -1896,6 +1897,8 @@ redirect:
         }
         av_dict_free(&options);
     } else {
+        av_log(s, AV_LOG_INFO, "Doing the other thing\n");
+
         int ret;
         /* open the tcp connection */
         ff_url_join(tcpname, sizeof(tcpname), lower_rtsp_proto, NULL,
@@ -1942,8 +1945,11 @@ redirect:
                        "CompanyID: KnKV4M4I/B2FjJ1TToLycw==\r\n"
                        "GUID: 00000000-0000-0000-0000-000000000000\r\n",
                        sizeof(cmd));
+        av_log(s, AV_LOG_INFO, "Sending OPTIONS\n");
+
         ff_rtsp_send_cmd(s, "OPTIONS", rt->control_uri, cmd, reply, NULL);
         if (reply->status_code != RTSP_STATUS_OK) {
+            av_log(s, AV_LOG_INFO, "Reply is %d\n", reply->status_code);
             err = ff_rtsp_averror(reply->status_code, AVERROR_INVALIDDATA);
             goto fail;
         }
