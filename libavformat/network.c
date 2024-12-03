@@ -76,9 +76,9 @@ int ff_network_wait_fd(int fd, int write)
     int ev = write ? POLLOUT : POLLIN;
     struct pollfd p = { .fd = fd, .events = ev, .revents = 0 };
     int ret;
-    av_log(NULL, AV_LOG_WARNING, "ff_network_wait_fd poll\n");
+    av_log(NULL, AV_LOG_TRACE, "ff_network_wait_fd poll\n");
     ret = poll(&p, 1, POLLING_TIME);
-    av_log(NULL, AV_LOG_WARNING, "ff_network_wait_fd poll done\n");
+    av_log(NULL, AV_LOG_TRACE, "ff_network_wait_fd poll done\n");
     return ret < 0 ? ff_neterrno() : p.revents & (ev | POLLERR | POLLHUP) ? 0 : AVERROR(EAGAIN);
 }
 
@@ -88,13 +88,13 @@ int ff_network_wait_fd_timeout(int fd, int write, int64_t timeout, AVIOInterrupt
     int64_t wait_start = 0;
 
     while (1) {
-        av_log(NULL, AV_LOG_WARNING, "ff_network_wait_fd_timeout check_interrupt\n");
+        av_log(NULL, AV_LOG_TRACE, "ff_network_wait_fd_timeout check_interrupt\n");
 
         if (ff_check_interrupt(int_cb))
             return AVERROR_EXIT;
-        av_log(NULL, AV_LOG_WARNING, "ff_network_wait_fd_timeout check_interrupt done, network_wait_fd\n");
+        av_log(NULL, AV_LOG_TRACE, "ff_network_wait_fd_timeout check_interrupt done, network_wait_fd\n");
         ret = ff_network_wait_fd(fd, write);
-        av_log(NULL, AV_LOG_WARNING, "ff_network_wait_fd_timeout check_interrupt network_wait_fd done\n");
+        av_log(NULL, AV_LOG_TRACE, "ff_network_wait_fd_timeout check_interrupt network_wait_fd done\n");
         if (ret != AVERROR(EAGAIN))
             return ret;
         if (timeout > 0) {
