@@ -288,18 +288,18 @@ static int tcp_read(URLContext *h, uint8_t *buf, int size)
     TCPContext *s = h->priv_data;
     int ret;
 
-    av_log(NULL, AV_LOG_TRACE, "tcp_read");
+    av_log(NULL, AV_LOG_TRACE, "tcp_read\n");
 
     if (!(h->flags & AVIO_FLAG_NONBLOCK)) {
-        av_log(NULL, AV_LOG_TRACE, "network_wait_fd_timeout %d", h->rw_timeout);
+        av_log(NULL, AV_LOG_TRACE, "tcp_read network_wait_fd_timeout %d\n", h->rw_timeout);
         ret = ff_network_wait_fd_timeout(s->fd, 0, h->rw_timeout, &h->interrupt_callback);
-        av_log(NULL, AV_LOG_TRACE, "network_wait_fd_timeout done");
+        av_log(NULL, AV_LOG_TRACE, "tcp_read network_wait_fd_timeout done\n");
         if (ret)
             return ret;
     }
-    av_log(NULL, AV_LOG_TRACE, "network_wait_fd_timeout recv");
+    av_log(NULL, AV_LOG_TRACE, "tcp_read recv\n");
     ret = recv(s->fd, buf, size, 0);
-    av_log(NULL, AV_LOG_TRACE, "network_wait_fd_timeout recv done");
+    av_log(NULL, AV_LOG_TRACE, "tcp_read recv done\n");
     if (ret == 0)
         return AVERROR_EOF;
     return ret < 0 ? ff_neterrno() : ret;
