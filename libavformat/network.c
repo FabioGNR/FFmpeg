@@ -78,7 +78,7 @@ int ff_network_wait_fd(int fd, int write)
     int ret;
     av_log(NULL, AV_LOG_TRACE, "ff_network_wait_fd poll\n");
     ret = poll(&p, 1, POLLING_TIME);
-    av_log(NULL, AV_LOG_TRACE, "ff_network_wait_fd poll done\n");
+    av_log(NULL, AV_LOG_TRACE, "ff_network_wait_fd poll done %d\n", p.revents);
     return ret < 0 ? ff_neterrno() : p.revents & (ev | POLLERR | POLLHUP) ? 0 : AVERROR(EAGAIN);
 }
 
